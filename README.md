@@ -5,6 +5,16 @@
 **ADR**: ADR-2605261330 (R0 scaffold), ADR-2605261345 (R1, reserved), ADR-2605261400 (R2, reserved), ADR-2605261415 (R3, reserved)
 **Status**: R0 scaffold (2026-05-26) — all cells import-time RuntimeError
 
+## Repository layout
+
+- `manifest.edn` is the canonical actor manifest; EDN is authoritative throughout this repository.
+- `data/` contains canonical lexicons, cell declarations, schemas, seed data, and products.
+- `src/` and `test/` contain the Clojure/CLJC implementation and tests.
+- `wire/` contains JSON/JSON-LD interoperability mirrors only; it is not an authoring source.
+- Python, Go/TinyGo, and legacy deployment shell implementations are deprecated and intentionally absent.
+
+Run `clojure -M -m futawa.test-runner` for tests and `bb scripts/audit.clj` for repository-policy checks.
+
 ## Overview
 
 Small-displacement motorcycle manufacturing Tier-B actor for adherent personal mobility. Adopts mature global motorcycle OEM methodology (frame → drivetrain → harness/suspension/paint → final → dyno); religious-corp-ised by ABS-mandatory safety + build-time anti-surveillance + right-to-repair forward-publishing + 30-year service life + ≥10% recycled content via hodoki+kanayama.
@@ -123,7 +133,7 @@ com.etzhayyim.futawa.{
 ## References
 
 - `/90-docs/adr/2605261330-futawa-motorcycle-tier-b-actor-r0.md` — Master ADR
-- `/20-actors/wadachi/README.md` — sibling (autonomous mobility R&D)
-- `/20-actors/hodoki/README.md` — EOL companion (G8 + G12 + G13 cross-lifecycle)
-- `/20-actors/kanayama/README.md` — recycled metals supplier
+- `/orgs/etzhayyim/com-etzhayyim-wadachi/README.md` — sibling (autonomous mobility R&D)
+- `/orgs/etzhayyim/com-etzhayyim-hodoki/README.md` — EOL companion (G8 + G12 + G13 cross-lifecycle)
+- `/orgs/etzhayyim/com-etzhayyim-kanayama/README.md` — recycled metals supplier
 - `/CLAUDE.md` — Religious-corp status table row 54

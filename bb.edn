@@ -1,0 +1,2 @@
+{:tasks {test {:task (shell "clojure -M -m futawa.test-runner")}
+         audit {:task (shell "bb scripts/audit.clj")}}}

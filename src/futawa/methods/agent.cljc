@@ -1,5 +1,5 @@
-(ns futawa.py.agent
-  "futawa 二輪 — small-displacement motorcycle manufacturing cell. 1:1 port of py/agent.py. Handlers
+(ns futawa.methods.agent
+  "futawa 二輪 — small-displacement motorcycle manufacturing cell. Substrate-native handlers
   over the motorcycle schema with constitutional gates: G7 ABS-mandatory (≥125cc/≥6kW), G8 anti-
   surveillance (no GPS/telematics/V2X/DRM), G11 capacity caps (≤250cc/≤15kW/≤200kg), G6 sound ≤80dB,
   G16/G17 USDC + 10% tithe settlement (stops at :intent). Pure compute; the Murakumo llm host binding

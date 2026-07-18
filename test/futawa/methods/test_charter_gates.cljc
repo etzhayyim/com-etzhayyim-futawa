@@ -6,7 +6,7 @@
   surveillance/telematics (G8), KPI caps (G11), mandatory ABS (G7), right-to-repair
   forward-publishing (G12), 30-year service life (G14). Its 14 gates are declared in the
   manifest and the per-step evidence/compliance flags are encoded across the 8 first-tier
-  `lex/*.edn` lexicons. This suite pins them so a future R-phase cell wave cannot silently
+  `data/lex/*.edn` lexicons. This suite pins them so a future R-phase cell wave cannot silently
   drift them:
 
     G8  NO GPS tracker / telematics at build — electricalAttestation carries g8SurveillanceClear;
@@ -19,22 +19,36 @@
     G13 circular feed — vehicleLotAttestation carries hodokiPreregisterOk + recycledMassCertCid
     G10 dive/build review Council-gated — silenMobilityReview requires councilApproval
 
-  Reads manifest via cheshire + local lexicons via clojure.edn. It weakens no gate; it asserts
+  Reads the canonical manifest and local lexicons via clojure.edn. It weakens no gate; it asserts
   them — the cap-value checks are a doc-drift guard. No-server-key + Murakumo-only (G9) untouched."
   (:require [clojure.test :refer [deftest is run-tests]]
             [clojure.edn :as edn]
-            [clojure.string :as str]
-            [cheshire.core :as json]))
+            [clojure.string :as str]))
 
 #?(:clj
    (do
-     (def ^:private here (.getParentFile (java.io.File. ^String *file*)))      ;; methods/
-     (def ^:private actor-dir (.getParentFile here))                          ;; futawa/
-     (def ^:private lexdir (java.io.File. actor-dir "lex"))
+     (def ^:private actor-dir (java.io.File. "."))
+     (def ^:private lexdir (java.io.File. actor-dir "data/lex"))
+     (defn- unblob
+       "lex/*.edn are now Datomic/Datascript tx-data (edn-datomize wrap-map, per-file namespace on
+       the bare :lexicon/:id/:defs keys); non-scalar values (here: :defs) are pr-str blob strings.
+       Parse back to the original nested value where possible."
+       [v]
+       (if (string? v)
+         (try (let [parsed (edn/read-string v)] (if (coll? parsed) parsed v))
+              (catch Exception _ v))
+         v))
+     (defn- reconstitute-entity
+       "tx-data [{:db/id -1 :<ns>/lexicon 1 :<ns>/id \"...\" :<ns>/defs \"...blob...\"}] -> the
+       original bare {:lexicon 1 :id \"...\" :defs {...}} map so get-in-based readers below are
+       unchanged."
+       [tx-data]
+       (into {} (map (fn [[k v]] [(keyword (name k)) (unblob v)]))
+             (dissoc (first tx-data) :db/id)))
      (defn- lex [name]
-       (edn/read-string (slurp (java.io.File. lexdir (str name ".edn")))))
+       (reconstitute-entity (edn/read-string (slurp (java.io.File. lexdir (str name ".edn"))))))
      (defn- manifest []
-       (json/parse-string (slurp (java.io.File. actor-dir "manifest.jsonld"))))))
+       (:actor/manifest (clojure.edn/read-string (slurp (java.io.File. actor-dir "manifest.edn")))))))
 
 (defn- record-node [doc] (get-in doc [:defs :main :record]))
 (defn- required-of [doc] (set (:required (record-node doc))))

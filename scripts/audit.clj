@@ -1,0 +1,11 @@
+(require '[clojure.edn :as edn] '[clojure.java.io :as io] '[clojure.string :as str])
+(def files (filter #(.isFile %) (file-seq (io/file "."))))
+(defn path [f] (str/replace-first (str f) #"^\./" ""))
+(doseq [f files :when (str/ends-with? (.getName f) ".edn")] (edn/read-string (slurp f)))
+(let [forbidden (filter #(re-find #"(?i)(\.go|\.py|\.sh|requirements\.txt)$" (path %)) files)
+      misplaced (filter #(and (re-find #"\.(json|jsonld)$" (path %))
+                              (not (str/starts-with? (path %) "wire/"))
+                              (not (= (path %) ".well-known/did.json"))) files)]
+  (assert (empty? forbidden) (str forbidden))
+  (assert (empty? misplaced) (str misplaced)))
+(println "audit: ok")

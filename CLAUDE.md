@@ -1,4 +1,4 @@
-# 20-actors/futawa — CLAUDE.md
+# com-etzhayyim-futawa — CLAUDE.md
 
 ## Identity
 
@@ -57,7 +57,7 @@ moto_frame_welding ──> moto_engine_assembly ──> moto_drivetrain_assembly
 
 ## Constitutional Gates (G1–G14)
 
-**IMMUTABLE R0–R3.** Stored in `manifest.jsonld` under `futawa:constitutionalGates`. Changes require Council Lv6+ supermajority + new ADR.
+**IMMUTABLE R0–R3.** Stored canonically in `manifest.edn` under `:actor/manifest` / `"constitutionalGates"`. `wire/manifest.jsonld` is an interoperability mirror. Changes require Council Lv6+ supermajority + new ADR.
 
 See `ADR-2605261330` §4 for definitions. **4 constitutional firsts:**
 
@@ -125,28 +125,19 @@ futawa is the **build-side** companion of hodoki (EOL-side). Together they close
 
 ## Testing (R0)
 
-**Smoke test**: Verify all 9 cells import without exception:
-
 ```bash
-cd kotoba-lang/kotodama-cells
-python -c "from cells.moto_frame_welding import MotoFrameWeldingCell; assert MotoFrameWeldingCell"
-python -c "from cells.moto_engine_assembly import MotoEngineAssemblyCell; assert MotoEngineAssemblyCell"
-python -c "from cells.moto_drivetrain_assembly import MotoDrivetrainAssemblyCell; assert MotoDrivetrainAssemblyCell"
-python -c "from cells.moto_electrical_harness import MotoElectricalHarnessCell; assert MotoElectricalHarnessCell"
-python -c "from cells.moto_suspension_brake import MotoSuspensionBrakeCell; assert MotoSuspensionBrakeCell"
-python -c "from cells.moto_body_paint import MotoBodyPaintCell; assert MotoBodyPaintCell"
-python -c "from cells.moto_final_assembly import MotoFinalAssemblyCell; assert MotoFinalAssemblyCell"
-python -c "from cells.moto_test_dyno_road import MotoTestDynoRoadCell; assert MotoTestDynoRoadCell"
-python -c "from cells.moto_provenance_binder import MotoProvenanceBinderCell; assert MotoProvenanceBinderCell"
+clojure -M -m futawa.test-runner
+bb scripts/audit.clj
 ```
 
-All should pass import; `.solve()` calls should raise `RuntimeError("futawa R0 scaffold...")`.
+The audit enforces EDN as canonical data, confines JSON/JSON-LD to `wire/`, and rejects deprecated Python, Go/TinyGo, requirements, and shell artifacts.
 
 ## Related Files
 
-- `/20-actors/futawa/manifest.jsonld` — DID + cell registry + gates + non-goals
+- `manifest.edn` — canonical DID + cell registry + gates + non-goals
+- `wire/manifest.jsonld` — JSON-LD interoperability mirror
 - `/90-docs/adr/2605261330-futawa-motorcycle-tier-b-actor-r0.md` — Master ADR
-- `/20-actors/hodoki/README.md` — EOL companion (G8 + G12 + G13 cross-lifecycle)
-- `/20-actors/kanayama/README.md` — recycled metals supplier
-- `/20-actors/wadachi/README.md` — sibling (4-wheel autonomous R&D)
+- `/orgs/etzhayyim/com-etzhayyim-hodoki/README.md` — EOL companion (G8 + G12 + G13 cross-lifecycle)
+- `/orgs/etzhayyim/com-etzhayyim-kanayama/README.md` — recycled metals supplier
+- `/orgs/etzhayyim/com-etzhayyim-wadachi/README.md` — sibling (4-wheel autonomous R&D)
 - `/CLAUDE.md` — Religious-corp status table row 54

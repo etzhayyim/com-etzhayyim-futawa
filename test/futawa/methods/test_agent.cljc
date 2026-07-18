@@ -1,9 +1,9 @@
-(ns futawa.py.test-agent
-  "futawa 二輪 — agent gate tests. 1:1 port of py/test_agent.py (custom harness → clojure.test).
+(ns futawa.methods.test-agent
+  "futawa 二輪 — substrate-native agent gate tests.
   Offline: capacity caps (G11), ABS-mandatory (G7), sound limit (G6), anti-surveillance (G8), USDC +
   tithe settlement (G16/G17/G18)."
   (:require [clojure.test :refer [deftest is]]
-            [futawa.py.agent :as agent]))
+            [futawa.methods.agent :as agent]))
 
 (deftest test-g11-displacement-cap
   (is (= false (get (agent/g11-capacity-caps 300 12.0 150.0) "ok"))))
